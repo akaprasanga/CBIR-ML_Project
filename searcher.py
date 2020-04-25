@@ -12,7 +12,6 @@ class Searcher:
         return queryFeatures
 
     def search(self, query_image_path, limit=3):
-        results = {}
         index_file = pd.read_csv(self.indexPath)
         index_file_numpy = index_file.to_numpy()
         index_array = index_file_numpy[:, 4:]
@@ -43,12 +42,29 @@ class Searcher:
             # cv2.imshow(str(i), images)
             # cv2.waitKey(0)
 
-    def chi2_distance(self, histA, histB, eps= 1e-10):
-        d = 0.5 * np.sum([((a - b) ** 2) / (a + b + eps)
-                          for (a, b) in zip(histA, histB)])
+    # def chi2_distance(self, histA, histB, eps= 1e-10):
+    #     d = 0.5 * np.sum([((a - b) ** 2) / (a + b + eps)
+    #                       for (a, b) in zip(histA, histB)])
+    #
+    #     return d
 
-        return d
+    def nupy_to_csv(self):
+        data_file = np.load(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\CBIR_VGG_index.npy", allow_pickle=True)
+        print(data_file)
+        total_features = []
+        for i in range(0, data_file.shape[0]):
+            name = data_file[i, 512]
+            image_path = "D:\\GRAD\\2020Spring\MachineLearning_CSC7333\CBIRProject\images\collection\\"+name
+            features = list(data_file[i, :512])
+            features.insert(0, name)
+            features.insert(0, name.split("_")[0])
+            features.insert(0, image_path)
+            total_features.append(features)
 
 
-c = Searcher(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\image_index.csv")
-c.search(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\images\flower\flower (52).JPG")
+        dataframe = pd.DataFrame(total_features)
+        dataframe.to_csv(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\image_index_vgg.csv")
+
+c = Searcher(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\image_index_vgg.csv")
+# c.search(r"C:\Users\PC\Downloads\marguerite-daisy-beautiful-beauty.jpg")
+c.nupy_to_csv()

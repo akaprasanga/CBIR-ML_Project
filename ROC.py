@@ -20,7 +20,7 @@ from scipy import interp
 from itertools import cycle
 
 #Load dataset (image)index)
-dataset = pd.read_csv(r'C:/Users/luisa/Dropbox/LSU/Classes/CSC_7333/Project/CBIR/image_index.csv')
+dataset = pd.read_csv(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\image_index_vgg.csv")
 
 #Drop non feature/label columns
 dataset= dataset.drop(dataset.columns[0], axis = 1)
@@ -28,7 +28,7 @@ dataset= dataset.drop(dataset.columns[0], axis = 1)
 dataset= dataset.drop(dataset.columns[1], axis = 1)
 
 #Binarize lables
-labels = label_binarize(dataset.iloc[: , 0], classes = ['animal', 'electronics', 'flowers', 'indoor', 'music', 'nature'])
+labels = label_binarize(dataset.iloc[: , 0], classes = ['animal', 'electronics', 'flower', 'indoor', 'music', 'nature'])
 n_classes = labels.shape[1]
 
 #Scale data
@@ -43,7 +43,7 @@ training_features = (training_features - np.min(training_features)) / (np.max(tr
 X_train, X_test, y_train, y_test = train_test_split(training_features, training_labels, test_size=0.3, shuffle=True)
 
 #Peform One vs All classifier
-classifier = OneVsRestClassifier(svm.SVC(kernel='linear', probability=True,))
+classifier = OneVsRestClassifier(svm.SVC(kernel='linear', probability=True))
 y_score = classifier.fit(X_train, y_train).decision_function(X_test)
 
 # Compute ROC curve and ROC area under curve (auc) for each class
