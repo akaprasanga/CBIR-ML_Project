@@ -3,6 +3,8 @@ import pandas as pd
 from vgg_net import VGGNetFeat
 from PIL import Image
 import time
+import cv2
+from SearchUsingColor import ColorBasedSearcher
 
 class SearchUsingVGG():
 
@@ -11,19 +13,19 @@ class SearchUsingVGG():
         self.search_image_path = search_image_path
         pass
 
-    def get_features_of_query_image(self):
+    def get_features_of_query_image(self, search_image_path):
         s = time.time()
         print("VGG Feature Extration Started...")
         vgg_obj = VGGNetFeat()
-        features = vgg_obj.run_inference(self.search_image_path)
+        features = vgg_obj.run_inference(search_image_path)
         print("VGG Feature Extraction Completed. Time taken=",time.time()-s)
         return features
 
-    def search(self, limit):
+    def search(self, search_image_path, limit=3):
         index_file = pd.read_csv(self.index_file_path)
         index_file_numpy = index_file.to_numpy()
         index_array = index_file_numpy[:, 4:]
-        query_features = self.get_features_of_query_image()
+        query_features = self.get_features_of_query_image(search_image_path)
         # query_feature_array = np.tile(np.array(query_features), (index_array.shape[0], 1))
         distance_dict = {}
         for i in range(0, index_array.shape[0]):
@@ -37,17 +39,23 @@ class SearchUsingVGG():
         selected_images = []
         for i in selected_index:
             selected_path.append(index_file_numpy[i, 1])
-            # selected_images.append(cv2.imread(index_file_numpy[i, 1]))
-        print(selected_index)
+            selected_images.append(cv2.resize(cv2.imread(index_file_numpy[i, 1]), (512, 512)))
 
-        Image.open(self.search_image_path).show(title="original")
-        # cv2.imshow("original",cv2.imread(query_image_path))
-        # cv2.waitKey(0)
+        original_img = cv2.resize(cv2.imread(search_image_path), (512, 512))
+        upper_joined = np.hstack((original_img, selected_images[0]))
+        lower_joined = np.hstack((selected_images[1], selected_images[2]))
+        joined_img = np.vstack((upper_joined, lower_joined))
 
-        for i,images in enumerate(selected_path):
-            Image.open(images).show(title=str(i))
-            # cv2.imshow(str(i), images)
-            # cv2.waitKey(0)
+        joined_img = Image.fromarray(cv2.cvtColor(joined_img, cv2.COLOR_BGR2RGB))
+        joined_img.show()
 
-c = SearchUsingVGG(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\image_index_vgg.csv", r"D:\GRAD\2020Spring\Semiconductor_EE7260\FinalDefects\images\20190226-bridgetisrael08.jpg")
-c.search(5)
+
+        return selected_images
+
+image_path_to_search = r"C:\Users\PC\Desktop\38843.jpg"
+
+colorObj = ColorBasedSearcher(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\image_index.csv")
+colorObj.search(image_path_to_search)
+
+vggObj = SearchUsingVGG(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\image_index_vgg.csv", image_path_to_search)
+vggObj.search(image_path_to_search)

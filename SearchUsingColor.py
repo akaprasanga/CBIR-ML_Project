@@ -3,7 +3,7 @@ import cv2
 import pandas as pd
 from image_descripter import ColorDescriptor
 from PIL import Image
-class Searcher:
+class ColorBasedSearcher:
     def __init__(self, indexPath):
         self.indexPath = indexPath
 
@@ -30,23 +30,19 @@ class Searcher:
         selected_images = []
         for i in selected_index:
             selected_path.append(index_file_numpy[i, 1])
-            selected_images.append(cv2.imread(index_file_numpy[i, 1]))
+            selected_images.append(cv2.resize(cv2.imread(index_file_numpy[i, 1]), (512, 512)))
         print(selected_index)
 
-        Image.open(query_image_path).show(title="original")
-        # cv2.imshow("original",cv2.imread(query_image_path))
-        # cv2.waitKey(0)
+        original_img = cv2.resize(cv2.imread(query_image_path), (512, 512))
+        upper_joined = np.hstack((original_img, selected_images[0]))
+        lower_joined = np.hstack((selected_images[1], selected_images[2]))
+        joined_img = np.vstack((upper_joined, lower_joined))
 
-        for i,images in enumerate(selected_path):
-            Image.open(images).show(title=str(i))
-            # cv2.imshow(str(i), images)
-            # cv2.waitKey(0)
+        joined_img = Image.fromarray(cv2.cvtColor(joined_img, cv2.COLOR_BGR2RGB))
+        joined_img.show()
 
-    # def chi2_distance(self, histA, histB, eps= 1e-10):
-    #     d = 0.5 * np.sum([((a - b) ** 2) / (a + b + eps)
-    #                       for (a, b) in zip(histA, histB)])
-    #
-    #     return d
+
+        return selected_images
 
     def nupy_to_csv(self):
         data_file = np.load(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\CBIR_VGG_index.npy", allow_pickle=True)
@@ -65,6 +61,6 @@ class Searcher:
         dataframe = pd.DataFrame(total_features)
         dataframe.to_csv(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\image_index_vgg.csv")
 
-c = Searcher(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\image_index.csv")
-c.search(r"C:\Users\PC\Downloads\marguerite-daisy-beautiful-beauty.jpg")
+# c = ColorBasedSearcher(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\image_index.csv")
+# c.search(r"C:\Users\PC\Downloads\marguerite-daisy-beautiful-beauty.jpg")
 # c.nupy_to_csv()
