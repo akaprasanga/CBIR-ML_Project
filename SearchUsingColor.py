@@ -65,6 +65,6 @@ class Searcher:
         dataframe = pd.DataFrame(total_features)
         dataframe.to_csv(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\image_index_vgg.csv")
 
-c = Searcher(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\image_index_vgg.csv")
-# c.search(r"C:\Users\PC\Downloads\marguerite-daisy-beautiful-beauty.jpg")
-c.nupy_to_csv()
+c = Searcher(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\image_index.csv")
+c.search(r"C:\Users\PC\Downloads\marguerite-daisy-beautiful-beauty.jpg")
+# c.nupy_to_csv()
