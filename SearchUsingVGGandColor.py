@@ -5,6 +5,7 @@ from PIL import Image
 import time
 import cv2
 from SearchUsingColor import ColorBasedSearcher
+import argparse
 
 class SearchUsingVGG():
 
@@ -18,7 +19,7 @@ class SearchUsingVGG():
         print("VGG Feature Extration Started...")
         vgg_obj = VGGNetFeat()
         features = vgg_obj.run_inference(search_image_path)
-        print("VGG Feature Extraction Completed. Time taken=",time.time()-s)
+        # print("VGG Feature Extraction Completed. Time taken=",time.time()-s)
         return features
 
     def search(self, search_image_path, limit=3):
@@ -48,14 +49,22 @@ class SearchUsingVGG():
 
         joined_img = Image.fromarray(cv2.cvtColor(joined_img, cv2.COLOR_BGR2RGB))
         joined_img.show()
-
-
         return selected_images
 
-image_path_to_search = r"C:\Users\PC\Desktop\38843.jpg"
+
+parser = argparse.ArgumentParser()
+parser.add_argument("search_image_path", help="Enter a path of query image to search")
+args = parser.parse_args()
+image_path_to_search = args.search_image_path
+
+
 
 colorObj = ColorBasedSearcher(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\image_index.csv")
+# colorObj = ColorBasedSearcher(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\CIFAR10_color_index.csv")
+
 colorObj.search(image_path_to_search)
 
-vggObj = SearchUsingVGG(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\image_index_vgg.csv", image_path_to_search)
+# vggObj = SearchUsingVGG(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\image_index_vgg.csv", image_path_to_search)
+vggObj = SearchUsingVGG(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\CIFAR_image_index_vgg.csv", image_path_to_search)
+
 vggObj.search(image_path_to_search)

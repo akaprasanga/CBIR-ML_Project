@@ -9,7 +9,6 @@ def describe(path):
 
 	cd = ColorDescriptor((8, 12, 3))
 
-	output = open("color_features.csv", 'w')
 	total_features = []
 	for imageName in os.listdir(path):
 		# extract the image ID (i.e. the unique filename) from the image
@@ -30,7 +29,7 @@ def describe(path):
 
 
 	dataframe = pd.DataFrame(total_features)
-	dataframe.to_csv(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\image_index.csv")
+	dataframe.to_csv(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\CIFAR10_color_index.csv")
 
 def rename(path):
 	i = 0
@@ -46,4 +45,4 @@ def rename(path):
 	print("finished processing")
 
 # rename(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\images\nature")
-describe(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\images\collection\\")
+describe(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\images\cifar10\\")

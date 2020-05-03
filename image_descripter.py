@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-import imutils
+# import imutils
 
 class ColorDescriptor:
 
@@ -48,12 +48,13 @@ class ColorDescriptor:
                             [0, 180, 0, 256, 0, 256])
 
         # normalize the histogram if we are using OpenCV 2.4
-        if imutils.is_cv2():
-            hist = cv2.normalize(hist).flatten()
+        # if imutils.is_cv2():
+
+        # hist = cv2.normalize(hist).flatten()
 
         # otherwise handle for OpenCV 3+
-        else:
-            hist = cv2.normalize(hist, hist).flatten()
+        # else:
+        hist = cv2.normalize(hist, hist).flatten()
 
         # return the histogram
         return hist

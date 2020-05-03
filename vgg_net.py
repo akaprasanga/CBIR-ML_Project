@@ -9,7 +9,7 @@ from torchvision.models.vgg import VGG
 
 import numpy as np
 from PIL import Image
-
+import time
 
 
 '''
@@ -147,14 +147,18 @@ class VGGNetFeat(object):
         if use_gpu:
             self.vgg_model = self.vgg_model.cuda()
         img = Image.open(path).convert('RGB').copy()
-        img = img.resize((900, 1200))
+        # img = img.resize((900, 1200))
         img = np.asarray(img)
+        shape = img.shape
         img = img[:, :, ::-1]  # switch to BGR
         img = np.transpose(img, (2, 0, 1)) / 255.
         img[0] -= means[0]  # reduce B's mean
         img[1] -= means[1]  # reduce G's mean
         img[2] -= means[2]  # reduce R's mean
         img = np.expand_dims(img, axis=0)
+        print("VGG Feature Extraction Image Dimension=", shape)
+        import time
+        start_time = time.time()
         try:
             if use_gpu:
                 inputs = torch.autograd.Variable(torch.from_numpy(img).cuda().float())
@@ -163,6 +167,7 @@ class VGGNetFeat(object):
             d_hist = self.vgg_model(inputs)[pick_layer]
             d_hist = np.sum(d_hist.data.cpu().numpy(), axis=0)
             d_hist /= np.sum(d_hist)  # normalize
+            print("Time taken = ", time.time() - start_time)
             return d_hist
         except:
             print(img.shape)

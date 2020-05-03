@@ -3,6 +3,8 @@ import cv2
 import pandas as pd
 from image_descripter import ColorDescriptor
 from PIL import Image
+import time
+
 class ColorBasedSearcher:
     def __init__(self, indexPath):
         self.indexPath = indexPath
@@ -15,8 +17,11 @@ class ColorBasedSearcher:
         index_file = pd.read_csv(self.indexPath)
         index_file_numpy = index_file.to_numpy()
         index_array = index_file_numpy[:, 4:]
+        start = time.time()
         cd = ColorDescriptor((8, 12, 3))
         query_features = np.array(cd.describe(cv2.imread(query_image_path)))
+        print("Image dimension:", cv2.imread(query_image_path).shape)
+        print("Color Feature Extraction Time = ", time.time()-start)
         # query_feature_array = np.tile(np.array(query_features), (index_array.shape[0], 1))
         distance_dict = {}
         for i in  range(0, index_array.shape[0]):
@@ -45,12 +50,12 @@ class ColorBasedSearcher:
         return selected_images
 
     def nupy_to_csv(self):
-        data_file = np.load(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\CBIR_VGG_index.npy", allow_pickle=True)
+        data_file = np.load(r"C:\Users\PC\Downloads\cifar10.npy", allow_pickle=True)
         print(data_file)
         total_features = []
         for i in range(0, data_file.shape[0]):
             name = data_file[i, 512]
-            image_path = "D:\\GRAD\\2020Spring\MachineLearning_CSC7333\CBIRProject\images\collection\\"+name
+            image_path = "D:\GRAD\\2020Spring\MachineLearning_CSC7333\CBIRProject\images\cifar10\\"+name
             features = list(data_file[i, :512])
             features.insert(0, name)
             features.insert(0, name.split("_")[0])
@@ -59,8 +64,8 @@ class ColorBasedSearcher:
 
 
         dataframe = pd.DataFrame(total_features)
-        dataframe.to_csv(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\image_index_vgg.csv")
+        dataframe.to_csv(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\CIFAR_image_index_vgg.csv")
 
-# c = ColorBasedSearcher(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\image_index.csv")
+c = ColorBasedSearcher(r"D:\GRAD\2020Spring\MachineLearning_CSC7333\CBIRProject\image_index.csv")
 # c.search(r"C:\Users\PC\Downloads\marguerite-daisy-beautiful-beauty.jpg")
 # c.nupy_to_csv()
